@@ -38,10 +38,13 @@ public class SubscriptionService {
             userRec = userRepo.save(user);
         }
 
-        User indicador = userRepo.findById(userId).orElse(null);
+        User indicador = null;
+        if (userId != null) {
+            indicador = userRepo.findById(userId).orElse(null);
             if (indicador == null) {
-                throw new UserIndicadorNotFoundException("Usuário "+ userId +" indicador não existe!");
+                throw new UserIndicadorNotFoundException("Usuário " + userId + " indicador não existe!");
             }
+        }
 
         Subscription subs = new Subscription();
         subs.setEvent(evt);
@@ -55,6 +58,7 @@ public class SubscriptionService {
         }
 
         Subscription res = subRepo.save(subs);
-        return new SubscriptionResponse(res.getSubscriptionNumber(), "http://codecraft.com/" + res.getEvent().getPrettyName() + "/" + res.getSubscriber().getId());
+        return new SubscriptionResponse(res.getSubscriptionNumber(),
+                "http://codecraft.com/" + res.getEvent().getPrettyName() + "/" + res.getSubscriber().getId());
     }
 }
