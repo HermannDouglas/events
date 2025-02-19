@@ -3,6 +3,8 @@ package br.com.nlw.events.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.nlw.events.dto.SubscriptionConflictException;
+import br.com.nlw.events.exception.EventNotFoundException;
 import br.com.nlw.events.model.Event;
 import br.com.nlw.events.model.Subscription;
 import br.com.nlw.events.model.User;
@@ -25,6 +27,10 @@ public class SubscriptionService {
     public Subscription createNewSubscription(String eventName, User user) {
 
         Event evt = evtRepo.findByPrettyName(eventName);
+        if (evt == null) {
+            throw new EventNotFoundException("Evento " + eventName + " não existe!");
+        }
+
         User userRec = userRepo.findByEmail(user.getEmail());
         if (userRec == null) {
             userRec = userRepo.save(user);
@@ -33,6 +39,12 @@ public class SubscriptionService {
         Subscription subs = new Subscription();
         subs.setEvent(evt);
         subs.setSubscriber(userRec);
+
+        Subscription tmpSub = subRepo.findByEventAndSubscriber(evt, userRec);
+        if (tmpSub != null) {
+            throw new SubscriptionConflictException(
+                    "Já existe inscrição para o usuário " + userRec.getName() + " no evento " + evt.getTitle());
+        }
 
         Subscription res = subRepo.save(subs);
         return res;
