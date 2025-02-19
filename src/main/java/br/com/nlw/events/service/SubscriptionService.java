@@ -3,8 +3,8 @@ package br.com.nlw.events.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.com.nlw.events.dto.SubscriptionConflictException;
 import br.com.nlw.events.exception.EventNotFoundException;
+import br.com.nlw.events.exception.SubscriptionConflictException;
 import br.com.nlw.events.model.Event;
 import br.com.nlw.events.model.Subscription;
 import br.com.nlw.events.model.User;
